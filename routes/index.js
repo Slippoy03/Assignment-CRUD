@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db");
+const verifyToken = require("../auth/middleware");
 
-
-router.get("/users", (req, res) => {
+router.get("/", verifyToken, (req, res) => {
   const query = "SELECT * FROM users";
   db.query(query, (err, results) => {
     if (err) {
@@ -13,7 +13,7 @@ router.get("/users", (req, res) => {
   });
 });
 
-router.get("/users/:id", (req, res) => {
+router.get("/:id", verifyToken, (req, res) => {
   const query = "SELECT * FROM users WHERE id = ?";
   db.query(query, [req.params.id], (err, results) => {
     if (err) {
@@ -23,8 +23,7 @@ router.get("/users/:id", (req, res) => {
   });
 });
 
-
-router.post("/users", (req, res) => {
+router.post("/", verifyToken, (req, res) => {
   const { name, email } = req.body;
   const query = "INSERT INTO users (name, email) VALUES (?, ?)";
   db.query(query, [name, email], (err, result) => {
@@ -35,8 +34,7 @@ router.post("/users", (req, res) => {
   });
 });
 
-
-router.put("/users/:id", (req, res) => {
+router.put("/:id", verifyToken, (req, res) => {
   const { name, email } = req.body;
   const query = "UPDATE users SET name = ?, email = ? WHERE id = ?";
   db.query(query, [name, email, req.params.id], (err, result) => {
@@ -47,8 +45,7 @@ router.put("/users/:id", (req, res) => {
   });
 });
 
-
-router.delete("/users/:id", (req, res) => {
+router.delete("/:id", verifyToken, (req, res) => {
   const query = "DELETE FROM users WHERE id = ?";
   db.query(query, [req.params.id], (err, result) => {
     if (err) {
